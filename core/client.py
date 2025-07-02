@@ -3,7 +3,7 @@ from core.commands.primeCmd import PrimeCommand
 
 from cleo.application import Application
 
-application = Application(name="numerology", version="1.0.0")
+application: Application = Application(name="numerology", version="1.0.0")
 application.add(PrimeCommand())
 
 def main() -> None:

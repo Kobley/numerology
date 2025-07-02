@@ -33,7 +33,7 @@ class alg:
     @staticmethod
     def rand_prime(bits: int) -> int:
         while True:
-            p = randbits(bits)
+            p: int = randbits(bits)
             if alg.miller_rabin(p):
                 return p
 
@@ -51,6 +51,8 @@ class alg:
             return False
 
         # Write n-1 as 2^r * d
+        r: int
+        d: int
         r, d = 0, n - 1
         while d % 2 == 0:
             d //= 2
@@ -58,8 +60,8 @@ class alg:
 
         import random
         for _ in range(k):
-            a = random.randrange(2, n - 1)
-            x = pow(a, d, n)
+            a: int = random.randrange(2, n - 1)
+            x: int = pow(a, d, n)
             if x == 1 or x == n - 1:
                 continue
             for _ in range(r - 1):
@@ -77,9 +79,11 @@ class alg:
             if n == 0:
                 return (0, 1)
             else:
+                a: int
+                b: int
                 a, b = fib_pair(n // 2)
-                c = a * (2 * b - a)
-                d = a * a + b * b
+                c: int = a * (2 * b - a)
+                d: int = a * a + b * b
                 if n % 2 == 0:
                     return (c, d)
                 else:
@@ -90,7 +94,7 @@ class alg:
     def is_fibonacci(num: int) -> bool:
         """Checks if num is a Fibonacci number."""
         def is_perfect_square(x: int) -> bool:
-            s = int(x ** 0.5)
+            s: int = int(x ** 0.5)
             return s * s == x
         return is_perfect_square(5 * num * num + 4) or is_perfect_square(5 * num * num - 4)
 
@@ -100,13 +104,14 @@ class alg:
         if n < 1:
             raise ValueError("n must be >= 1")
         # Use a rough upper bound for nth prime: n*log(n) + n*log(log(n))
+        upper: int
         if n < 6:
             upper = 15
         else:
             upper = int(n * (math.log(n) + math.log(math.log(n)))) + 10
-        sieve = [True] * (upper + 1)
+        sieve: List[bool] = [True] * (upper + 1)
         sieve[0:2] = [False, False]
-        count = 0
+        count: int = 0
         for i in range(2, upper + 1):
             if sieve[i]:
                 count += 1
@@ -136,11 +141,11 @@ class alg:
         """Checks if g is a primitive root modulo p (p must be prime)."""
         if not alg.miller_rabin(p):
             return False
-        phi = p - 1
+        phi: int = p - 1
         # Find all prime factors of phi
-        factors = set()
-        d = phi
-        i = 2
+        factors: set[int] = set()
+        d: int = phi
+        i: int = 2
         while i * i <= d:
             if d % i == 0:
                 factors.add(i)
@@ -169,7 +174,7 @@ class alg:
         """Checks if n is a perfect number."""
         if n < 2:
             return False
-        divisors_sum = 1
+        divisors_sum: int = 1
         for i in range(2, int(n**0.5) + 1):
             if n % i == 0:
                 divisors_sum += i
@@ -182,12 +187,13 @@ class alg:
         """Checks if n is a perfect square."""
         if n < 0:
             return False
-        root = int(n ** 0.5)
+        root: int = int(n ** 0.5)
         return root * root == n
 
     @staticmethod
     def is_cube(n: int) -> bool:
         """Checks if n is a perfect cube."""
+        root: int
         if n < 0:
             root = int(round(abs(n) ** (1/3)))
             return -root * root * root == n
@@ -197,8 +203,8 @@ class alg:
     @staticmethod
     def squares_in_range(start: int, end: int) -> List[int]:
         """Returns a list of all perfect squares in [start, end] (inclusive)."""
-        result = []
-        n = int(start ** 0.5)
+        result: List[int] = []
+        n: int = int(start ** 0.5)
         if n * n < start:
             n += 1
         while n * n <= end:
@@ -211,7 +217,7 @@ class alg:
         """Returns a list of all primes <= n using the Sieve of Eratosthenes."""
         if n < 2:
             return []
-        sieve = [True] * (n + 1)
+        sieve: List[bool] = [True] * (n + 1)
         sieve[0:2] = [False, False]
         for i in range(2, int(n ** 0.5) + 1):
             if sieve[i]:
@@ -225,18 +231,18 @@ class alg:
         import math
         if limit < 2:
             return []
-        sqrt = int(math.sqrt(limit)) + 1
-        primes = alg.primes_up_to(sqrt)
-        result = primes.copy()
-        low = sqrt
-        high = 2 * sqrt
+        sqrt: int = int(math.sqrt(limit)) + 1
+        primes: List[int] = alg.primes_up_to(sqrt)
+        result: List[int] = primes.copy()
+        low: int = sqrt
+        high: int = 2 * sqrt
         while low < limit + 1:
             if high > limit + 1:
                 high = limit + 1
-            mark = [True] * (high - low)
+            mark: List[bool] = [True] * (high - low)
             for p in primes:
                 # Find the minimum number in [low, high) that is a multiple of p
-                start = max(p * p, ((low + p - 1) // p) * p)
+                start: int = max(p * p, ((low + p - 1) // p) * p)
                 for j in range(start, high, p):
                     mark[j - low] = False
             for i in range(low, high):
@@ -254,15 +260,15 @@ class alg:
     @staticmethod
     def has_repeated_digits(n: int) -> bool:
         """Checks if n has any repeated digits."""
-        s = str(abs(n))
+        s: str = str(abs(n))
         return len(set(s)) < len(s)
 
     @staticmethod
     def has_palindromic_substring(n: int, length: int) -> bool:
         """Checks if n contains a palindromic substring of the given length."""
-        s = str(abs(n))
+        s: str = str(abs(n))
         for i in range(len(s) - length + 1):
-            sub = s[i:i+length]
+            sub: str = s[i:i+length]
             if sub == sub[::-1]:
                 return True
         return False
@@ -285,7 +291,7 @@ class alg:
         """Returns the sum of all positive divisors of n (including n)."""
         if n < 1:
             return 0
-        total = 1 + n if n > 1 else 1
+        total: int = 1 + n if n > 1 else 1
         for i in range(2, int(n ** 0.5) + 1):
             if n % i == 0:
                 total += i
@@ -298,14 +304,14 @@ class alg:
         """Returns the sum of all distinct prime divisors of n."""
         if n < 2:
             return 0
-        s = 0
-        x = n
+        s: int = 0
+        x: int = n
         for p in SMALL_PRIMES:
             if x % p == 0:
                 s += p
                 while x % p == 0:
                     x //= p
-        f = 2 if x % 2 else 3
+        f: int = 2 if x % 2 else 3
         while x > 1 and f * f <= x:
             if x % f == 0:
                 if alg.miller_rabin(f):
@@ -322,13 +328,13 @@ class alg:
         """Returns a list of the prime factors of n (with multiplicity)."""
         if n < 2:
             return []
-        factors = []
-        x = n
+        factors: List[int] = []
+        x: int = n
         for p in SMALL_PRIMES:
             while x % p == 0:
                 factors.append(p)
                 x //= p
-        f = 2 if x % 2 else 3
+        f: int = 2 if x % 2 else 3
         while x > 1 and f * f <= x:
             while x % f == 0:
                 if alg.miller_rabin(f):
@@ -344,8 +350,10 @@ class alg:
         """Returns the index n such that Fibonacci(n) == num, or -1 if not a Fibonacci number."""
         if num < 0:
             return -1
+        a: int
+        b: int
         a, b = 0, 1
-        idx = 0
+        idx: int = 0
         while a < num:
             a, b = b, a + b
             idx += 1
@@ -354,7 +362,9 @@ class alg:
     @staticmethod
     def fibs_up_to(n: int) -> List[int]:
         """Returns a list of all Fibonacci numbers <= n."""
-        fibs = []
+        fibs: List[int] = []
+        a: int
+        b: int
         a, b = 0, 1
         while a <= n:
             fibs.append(a)
@@ -366,7 +376,7 @@ class alg:
         """Returns a list of the first n Fibonacci numbers."""
         if n < 1:
             return []
-        fibs = [0]
+        fibs: List[int] = [0]
         if n == 1:
             return fibs
         fibs.append(1)
@@ -379,7 +389,7 @@ class alg:
         """Returns the smallest prime greater than n."""
         if n < 2:
             return 2
-        candidate = n + 1
+        candidate: int = n + 1
         while True:
             if alg.miller_rabin(candidate):
                 return candidate
@@ -404,7 +414,7 @@ class alg:
         
         # Calculate bits needed: log2(max_value + 1)
         # We add 1 because we need to represent 0 as well
-        bits_needed = math.ceil(math.log2(max_value + 1))
+        bits_needed: int = math.ceil(math.log2(max_value + 1))
         
         return bits_needed
 
@@ -424,6 +434,6 @@ class alg:
         max_value = (2 ** num_bits) - 1
         
         # Calculate digits needed: log10(max_value + 1)
-        digits_needed = math.floor(math.log10(max_value + 1))
+        digits_needed: int = math.floor(math.log10(max_value + 1))
         
         return digits_needed

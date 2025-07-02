@@ -2,12 +2,13 @@ from cleo.commands.command import Command
 from cleo.helpers import argument, option
 from core.algorithms import alg
 import sys
+from typing import Optional
 sys.set_int_max_str_digits(32768)
 
 class PrimeCommand(Command):
-    name = "prime"
-    description = "find a prime number with specific properties"
-    arguments = [
+    name: str = "prime"
+    description: str = "find a prime number with specific properties"
+    arguments: list = [
         argument(
             "type",
             description="what type of prime to discover? [standard, fib, twin, safe]",
@@ -21,7 +22,7 @@ class PrimeCommand(Command):
             default="standard"
         )
     ]
-    options = [
+    options: list = [
         option(
             "palindrome",
             "p",
@@ -43,19 +44,19 @@ class PrimeCommand(Command):
         )
     ]
 
-    def handle(self):
-        num_type = self.argument("type")
-        search_type = self.argument("search")
-        substring = self.option("substring")
-        length = self.option("length")
-        palindrome = self.option("palindrome")
+    def handle(self) -> int:
+        num_type: str = self.argument("type")
+        search_type: str = self.argument("search")
+        substring: Optional[str] = self.option("substring")
+        length: str = self.option("length")
+        palindrome: bool = self.option("palindrome")
 
         if num_type == "standard":
             self.line("Searching for a standard prime number....")
             
             if search_type == "standard":
                 
-                canidate:int = 3
+                canidate: int = 3
                 while True:
                     if alg.miller_rabin(canidate):
                         
@@ -88,7 +89,7 @@ class PrimeCommand(Command):
                 # progress = self.progress_bar(3)
                 while True:
                     # progress.start()
-                    rand_canidate:int = alg.rand_prime(alg.digits_to_bits(int(length)))
+                    rand_canidate: int = alg.rand_prime(alg.digits_to_bits(int(length)))
                     
                     if alg.miller_rabin(rand_canidate):
                         # progress.advance()
@@ -116,10 +117,10 @@ class PrimeCommand(Command):
             self.line("Searching for a fibonacci prime number...")
             if search_type == "standard":
                 
-                fib_canidate:int = 3
+                fib_canidate: int = 3
                 while True:
                     if alg.miller_rabin(fib_canidate) and alg.miller_rabin(alg.nth_fib(fib_canidate)):
-                        fib_num:int = alg.nth_fib(fib_canidate)
+                        fib_num: int = alg.nth_fib(fib_canidate)
                         
                         if length:
                             if len(str(fib_num)) >= int(length):
@@ -148,8 +149,8 @@ class PrimeCommand(Command):
                     fib_canidate = alg.next_prime(fib_canidate)
                     
             elif search_type == "rand":
-                progress = self.progress_bar(3)
-                rand_fib_canidate:int = 0
+                progress = self.progress_bar(3)  # type: ignore
+                rand_fib_canidate: int = 0
                 while True:
                     progress.start()
                     rand_fib_canidate = alg.nth_fib(alg.rand_prime(alg.digits_to_bits(int(length))))
@@ -190,3 +191,5 @@ class PrimeCommand(Command):
                 pass
             elif search_type == "rand":
                 pass
+        
+        return 0
