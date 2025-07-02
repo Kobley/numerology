@@ -1,4 +1,7 @@
 from core.strCon import strConstants
+from secrets import randbits
+from typing import List, Tuple
+import math
 
 def entry() -> None:
     raise RuntimeError(strConstants.INCORRECT_USAGE)
@@ -6,9 +9,7 @@ def entry() -> None:
 if __name__ == "__main__":
     entry()
 
-import math
-
-SMALL_PRIMES = [
+SMALL_PRIMES:list[int] = [
     2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
     31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
     73, 79, 83, 89, 97, 101, 103, 107, 109, 113,
@@ -23,20 +24,30 @@ SMALL_PRIMES = [
 class alg:
 
     @staticmethod
-    def check_prime_factors(n) -> bool:
+    def check_prime_factors(n: int) -> bool:
         for p in SMALL_PRIMES:
             if n % p == 0:
                 return False
         return True
 
     @staticmethod
-    def miller_rabin(n, k=5):
+    def rand_prime(bits: int) -> int:
+        while True:
+            p = randbits(bits)
+            if alg.miller_rabin(p):
+                return p
+
+    @staticmethod
+    def miller_rabin(n: int, k: int = 5) -> bool:
         """Miller-Rabin primality test. Returns True if n is probably prime."""
         if n <= 1:
             return False
         if n <= 3:
             return True
         if n % 2 == 0:
+            return False
+
+        if not alg.check_prime_factors(n):
             return False
 
         # Write n-1 as 2^r * d
@@ -60,9 +71,9 @@ class alg:
         return True
 
     @staticmethod
-    def nth_fib(n):
+    def nth_fib(n: int) -> int:
         """Returns the nth Fibonacci number using fast doubling."""
-        def fib_pair(n):
+        def fib_pair(n: int) -> Tuple[int, int]:
             if n == 0:
                 return (0, 1)
             else:
@@ -76,15 +87,15 @@ class alg:
         return fib_pair(n)[0]
 
     @staticmethod
-    def is_fibonacci(num):
+    def is_fibonacci(num: int) -> bool:
         """Checks if num is a Fibonacci number."""
-        def is_perfect_square(x):
+        def is_perfect_square(x: int) -> bool:
             s = int(x ** 0.5)
             return s * s == x
         return is_perfect_square(5 * num * num + 4) or is_perfect_square(5 * num * num - 4)
 
     @staticmethod
-    def nth_prime(n):
+    def nth_prime(n: int) -> int:
         """Returns the nth prime number using a sieve for small n, or a segmented sieve for larger n."""
         if n < 1:
             raise ValueError("n must be >= 1")
@@ -107,21 +118,21 @@ class alg:
         raise ValueError("n is too large for this method")
 
     @staticmethod
-    def is_twin_prime(n):
+    def is_twin_prime(n: int) -> bool:
         """Checks if n is a twin prime."""
         if not alg.miller_rabin(n):
             return False
         return alg.miller_rabin(n - 2) or alg.miller_rabin(n + 2)
 
     @staticmethod
-    def is_safe_prime(n):
+    def is_safe_prime(n: int) -> bool:
         """Checks if n is a safe prime (i.e., n is prime and (n-1)//2 is also prime)."""
         if not alg.miller_rabin(n):
             return False
         return alg.miller_rabin((n - 1) // 2)
 
     @staticmethod
-    def is_primitive_root(g, p):
+    def is_primitive_root(g: int, p: int) -> bool:
         """Checks if g is a primitive root modulo p (p must be prime)."""
         if not alg.miller_rabin(p):
             return False
@@ -144,17 +155,17 @@ class alg:
         return True
 
     @staticmethod
-    def is_sophie_germain_prime(p):
+    def is_sophie_germain_prime(p: int) -> bool:
         """Checks if p is a Sophie Germain prime."""
         return alg.miller_rabin(p) and alg.miller_rabin(2 * p + 1)
 
     @staticmethod
-    def is_palindromic(n):
+    def is_palindromic(n: int) -> bool:
         """Checks if n is a palindromic"""
         return str(n) == str(n)[::-1]
 
     @staticmethod
-    def is_perfect_number(n):
+    def is_perfect_number(n: int) -> bool:
         """Checks if n is a perfect number."""
         if n < 2:
             return False
@@ -167,7 +178,7 @@ class alg:
         return divisors_sum == n
 
     @staticmethod
-    def is_square(n):
+    def is_square(n: int) -> bool:
         """Checks if n is a perfect square."""
         if n < 0:
             return False
@@ -175,7 +186,7 @@ class alg:
         return root * root == n
 
     @staticmethod
-    def is_cube(n):
+    def is_cube(n: int) -> bool:
         """Checks if n is a perfect cube."""
         if n < 0:
             root = int(round(abs(n) ** (1/3)))
@@ -184,7 +195,7 @@ class alg:
         return root * root * root == n
 
     @staticmethod
-    def squares_in_range(start, end):
+    def squares_in_range(start: int, end: int) -> List[int]:
         """Returns a list of all perfect squares in [start, end] (inclusive)."""
         result = []
         n = int(start ** 0.5)
@@ -196,7 +207,7 @@ class alg:
         return result
 
     @staticmethod
-    def primes_up_to(n):
+    def primes_up_to(n: int) -> List[int]:
         """Returns a list of all primes <= n using the Sieve of Eratosthenes."""
         if n < 2:
             return []
@@ -209,7 +220,7 @@ class alg:
         return [i for i, is_prime in enumerate(sieve) if is_prime]
 
     @staticmethod
-    def segmented_sieve(limit):
+    def segmented_sieve(limit: int) -> List[int]:
         """Returns a list of all primes <= limit using the segmented sieve."""
         import math
         if limit < 2:
@@ -236,18 +247,18 @@ class alg:
         return result
 
     @staticmethod
-    def contains_digit_substring(n, substring):
+    def contains_digit_substring(n: int, substring: str) -> bool:
         """Checks if the digit sequence 'substring' is contained in the decimal representation of n."""
         return substring in str(abs(n))
 
     @staticmethod
-    def has_repeated_digits(n):
+    def has_repeated_digits(n: int) -> bool:
         """Checks if n has any repeated digits."""
         s = str(abs(n))
         return len(set(s)) < len(s)
 
     @staticmethod
-    def has_palindromic_substring(n, length):
+    def has_palindromic_substring(n: int, length: int) -> bool:
         """Checks if n contains a palindromic substring of the given length."""
         s = str(abs(n))
         for i in range(len(s) - length + 1):
@@ -257,12 +268,12 @@ class alg:
         return False
 
     @staticmethod
-    def digit_sum(n):
+    def digit_sum(n: int) -> int:
         """Returns the sum of the digits of n."""
         return sum(int(d) for d in str(abs(n)))
 
     @staticmethod
-    def digital_root(n):
+    def digital_root(n: int) -> int:
         """Returns the digital root of n."""
         n = abs(n)
         while n >= 10:
@@ -270,7 +281,7 @@ class alg:
         return n
 
     @staticmethod
-    def sum_of_divisors(n):
+    def sum_of_divisors(n: int) -> int:
         """Returns the sum of all positive divisors of n (including n)."""
         if n < 1:
             return 0
@@ -283,7 +294,7 @@ class alg:
         return total
 
     @staticmethod
-    def sum_of_prime_divisors(n):
+    def sum_of_prime_divisors(n: int) -> int:
         """Returns the sum of all distinct prime divisors of n."""
         if n < 2:
             return 0
@@ -307,7 +318,7 @@ class alg:
         return int(s)
 
     @staticmethod
-    def prime_factors(n):
+    def prime_factors(n: int) -> List[int]:
         """Returns a list of the prime factors of n (with multiplicity)."""
         if n < 2:
             return []
@@ -329,7 +340,7 @@ class alg:
         return factors
 
     @staticmethod
-    def fib_index(num):
+    def fib_index(num: int) -> int:
         """Returns the index n such that Fibonacci(n) == num, or -1 if not a Fibonacci number."""
         if num < 0:
             return -1
@@ -341,7 +352,7 @@ class alg:
         return idx if a == num else -1
 
     @staticmethod
-    def fibs_up_to(n):
+    def fibs_up_to(n: int) -> List[int]:
         """Returns a list of all Fibonacci numbers <= n."""
         fibs = []
         a, b = 0, 1
@@ -351,7 +362,7 @@ class alg:
         return fibs
 
     @staticmethod
-    def first_n_fibs(n):
+    def first_n_fibs(n: int) -> List[int]:
         """Returns a list of the first n Fibonacci numbers."""
         if n < 1:
             return []
@@ -362,3 +373,57 @@ class alg:
         for _ in range(2, n):
             fibs.append(fibs[-1] + fibs[-2])
         return fibs
+
+    @staticmethod
+    def next_prime(n: int) -> int:
+        """Returns the smallest prime greater than n."""
+        if n < 2:
+            return 2
+        candidate = n + 1
+        while True:
+            if alg.miller_rabin(candidate):
+                return candidate
+            candidate += 1
+
+    @staticmethod
+    def digits_to_bits(num_digits: int) -> int:
+        """
+        Returns the minimum number of bits needed to represent an integer with the given number of decimal digits.
+        
+        digits_to_bits(1) -> 4   (0-9 needs 4 bits)
+        digits_to_bits(2) -> 7   (10-99 needs 7 bits)
+        digits_to_bits(3) -> 10  (100-999 needs 10 bits)
+        digits_to_bits(20) -> 67 (20 digits needs ~67 bits)
+        """
+        if num_digits <= 0:
+            return 0
+        
+        # For n digits, the range is 10^(n-1) to 10^n - 1
+        # We need to find the smallest number of bits that can represent 10^n - 1
+        max_value = 10 ** num_digits - 1
+        
+        # Calculate bits needed: log2(max_value + 1)
+        # We add 1 because we need to represent 0 as well
+        bits_needed = math.ceil(math.log2(max_value + 1))
+        
+        return bits_needed
+
+    @staticmethod
+    def bits_to_digits(num_bits: int) -> int:
+        """
+        Returns the maximum number of decimal digits that can be represented with the given number of bits.
+
+        bits_to_digits(4) -> 1   (4 bits can represent 0-15, so max 1 digit)
+        bits_to_digits(8) -> 2   (8 bits can represent 0-255, so max 2 digits)
+        bits_to_digits(64) -> 19 (64 bits can represent ~19 digits)
+        """
+        if num_bits <= 0:
+            return 0
+        
+        # For n bits, the maximum value is 2^n - 1
+        max_value = (2 ** num_bits) - 1
+        
+        # Calculate digits needed: log10(max_value + 1)
+        digits_needed = math.floor(math.log10(max_value + 1))
+        
+        return digits_needed
